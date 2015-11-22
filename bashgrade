@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+# packGrade - a CLI Bash script to help maintain your system!
+# Yes i do realise this is horribly ugly coding.. Ideas and suggestions would be greatly appreciated.
+
+LANG=C
+LANGUAGE=C
+LC_ALL=C
+
+scriptVersion="0.0.1"
+
+#######################################
+#Static Variables And Common Functions#
+######################################
+c0="\033[0m" # Reset Text
+bold="\033[1m" # Bold Text
+underline="\033[4m" # Underline Text
+
+displayVersion() {
+	printf "${underline}packGrade${c0} - version ${scriptVersion}\n"
+}
+
+displayHelp() {
+	printf "${underline}--clean${c0} Use this to clean your system.\n"
+}
+
+###################
+#Begin Flags Phase#
+###################
+
+case $1 in
+	--help) displayHelp; exit 0;;
+	-h) displayHelp; exit 0;;
+	--version) displayVersion; exit 0;;
+	-v) displayVersion; exit 0;;
+	--clean) clean='1' ;;
+esac
+
+if [ $clean == '1' ]; then
+	printf "Would you like to do a package upgrade first? [Y/n] "
+	upgradePackages= ;;
+		if [ upgradePackages == y ]; then
+			exec sudo pacman -Syu
+		fi
+	printf "Cleaning system...\n"
+	if [ "$(pacman -Qtdq)" == "" ]; then
+		echo "No orphans to remove!"
+	else
+		pacman -Rns $(pacman -Qtdq)
+	fi
+	printf "Done!"
+else
+	printf "Not cleaning.\n"
+fi
